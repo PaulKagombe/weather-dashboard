@@ -3,9 +3,11 @@ import SearchBar from './components/SearchBar'
 import CurrentWeather from './components/CurrentWeather'
 import Forecast from './components/Forecast'
 import WeatherDetails from './components/WeatherDetails'
+import WeatherAlerts from './components/WeatherAlerts'
 import GeolocationButton from './components/GeolocationButton'
 import { fetchWeatherData } from './services/weatherAPI'
 import { getLocationFromCoordinates } from './services/geolocationService'
+import { generateWeatherAlerts } from './services/alertService'
 import './App.css'
 
 function App() {
@@ -16,6 +18,7 @@ function App() {
   const [city, setCity] = useState('London')
   const [locationLoading, setLocationLoading] = useState(false)
   const [userLocation, setUserLocation] = useState(null)
+  const [alerts, setAlerts] = useState([])
 
   useEffect(() => {
     handleSearch(city)
@@ -29,10 +32,15 @@ function App() {
       setCurrentWeather(data.current)
       setForecast(data.forecast)
       setCity(searchCity)
+      
+      // Generate alerts based on weather data
+      const generatedAlerts = generateWeatherAlerts(data.current)
+      setAlerts(generatedAlerts)
     } catch (err) {
       setError(err.message || 'Failed to fetch weather data. Please try again.')
       setCurrentWeather(null)
       setForecast(null)
+      setAlerts([])
     } finally {
       setLoading(false)
     }
@@ -78,6 +86,10 @@ function App() {
     )
   }
 
+  const handleDismissAlert = (index) => {
+    setAlerts(alerts.filter((_, i) => i !== index))
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-purple-600 p-4">
       <div className="max-w-6xl mx-auto">
@@ -91,7 +103,7 @@ function App() {
         </div>
 
         {/* Search Bar and Geolocation */}
-        <div className="flex gap-2 justify-center mb-8">
+        <div className="flex gap-2 justify-center mb-8 flex-wrap">
           <div className="flex-1 max-w-md">
             <SearchBar onSearch={handleSearch} />
           </div>
@@ -107,6 +119,11 @@ function App() {
             <i className="fas fa-map-marker-alt mr-2 text-red-300"></i>
             Location detected: {city}
           </div>
+        )}
+
+        {/* Weather Alerts */}
+        {alerts.length > 0 && (
+          <WeatherAlerts alerts={alerts} onDismiss={handleDismissAlert} />
         )}
 
         {/* Error Message */}
