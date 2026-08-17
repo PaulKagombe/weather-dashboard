@@ -6,7 +6,7 @@ import WeatherDetails from './components/WeatherDetails'
 import WeatherAlerts from './components/WeatherAlerts'
 import GeolocationButton from './components/GeolocationButton'
 import ThemeToggle from './components/ThemeToggle'
-import { fetchWeatherData } from './services/weatherAPI'
+import { fetchWeatherData, fetchWeatherByCoordinates } from './services/weatherAPI'
 import { getLocationFromCoordinates } from './services/geolocationService'
 import { generateWeatherAlerts } from './services/alertService'
 import { useTheme } from './context/ThemeContext'
@@ -61,16 +61,38 @@ function App() {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        try {
-          const { latitude, longitude } = position.coords
-          setUserLocation({ latitude, longitude })
+        const { latitude, longitude } = position.coords
+        setUserLocation({ latitude, longitude })
 
-          // Get city name from coordinates using reverse geocoding
-          const cityName = await getLocationFromCoordinates(latitude, longitude)
-          await handleSearch(cityName)
+        setLoading(true)
+        setError(null)
+
+        try {
+          // Fetch weather directly by coordinates - no name lookup involved,
+          // so this never breaks due to reverse-geocoding returning a
+          // ward/township-level name the weather API can't match by name.
+          const data = await fetchWeatherByCoordinates(latitude, longitude)
+          setCurrentWeather(data.current)
+          setForecast(data.forecast)
+
+          const generatedAlerts = generateWeatherAlerts(data.current)
+          setAlerts(generatedAlerts)
+
+          // Reverse geocode purely for the display label; a failure here
+          // must never block or clear the weather data we already have.
+          try {
+            const cityName = await getLocationFromCoordinates(latitude, longitude)
+            setCity(cityName)
+          } catch (geoErr) {
+            setCity('Your location')
+          }
         } catch (err) {
-          setError('Failed to get location. Please try again.')
+          setError(err.message || 'Failed to get weather for your location. Please try again.')
+          setCurrentWeather(null)
+          setForecast(null)
+          setAlerts([])
         } finally {
+          setLoading(false)
           setLocationLoading(false)
         }
       },
@@ -85,7 +107,8 @@ function App() {
         }
         setError(errorMessage)
         setLocationLoading(false)
-      }
+      },
+      { timeout: 10000, enableHighAccuracy: true }
     )
   }
 
