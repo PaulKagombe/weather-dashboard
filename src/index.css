@@ -14,8 +14,20 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease;
+}
+
+/* Light Mode */
+body:not(.dark) {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
+}
+
+/* Dark Mode */
+body.dark {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  min-height: 100vh;
+  color: #e0e0e0;
 }
 
 .weather-card {
@@ -23,12 +35,70 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.dark .weather-card {
+  background-color: rgba(30, 30, 46, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-effect {
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.3s ease;
+}
+
+.dark .glass-effect {
+  background-color: rgba(45, 45, 65, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+}
+
+.dark .glass-effect h2,
+.dark .glass-effect p {
+  color: #e0e0e0;
+}
+
+.dark .glass-effect .text-gray-800 {
+  color: #e0e0e0;
+}
+
+.dark .glass-effect .text-gray-600 {
+  color: #b0b0b0;
+}
+
+.dark .glass-effect .text-blue-600 {
+  color: #64b5f6;
+}
+
+.dark .glass-effect .text-purple-600 {
+  color: #ba68c8;
+}
+
+.dark .glass-effect .text-green-600 {
+  color: #81c784;
+}
+
+.dark .glass-effect .text-orange-600 {
+  color: #ffb74d;
+}
+
+.dark .bg-blue-100 {
+  background-color: rgba(100, 181, 246, 0.2);
+}
+
+.dark .bg-purple-100 {
+  background-color: rgba(186, 104, 200, 0.2);
+}
+
+.dark .bg-green-100 {
+  background-color: rgba(129, 199, 132, 0.2);
+}
+
+.dark .bg-orange-100 {
+  background-color: rgba(255, 180, 77, 0.2);
 }
 
 .fade-in {
@@ -44,4 +114,12 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Dark mode text adjustments for cards */
+.dark .bg-blue-100,
+.dark .bg-purple-100,
+.dark .bg-green-100,
+.dark .bg-orange-100 {
+  color: #e0e0e0;
 }
