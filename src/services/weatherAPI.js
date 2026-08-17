@@ -50,6 +50,51 @@ export const fetchWeatherData = async (city) => {
 }
 
 /**
+ * Fetch weather data by coordinates
+ * @param {number} latitude - Latitude
+ * @param {number} longitude - Longitude
+ * @returns {Promise<Object>} Weather data object
+ */
+export const fetchWeatherByCoordinates = async (latitude, longitude) => {
+  try {
+    if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE') {
+      throw new Error('API key not configured. Please set VITE_OPENWEATHER_API_KEY in .env')
+    }
+
+    // Fetch current weather
+    const currentResponse = await axios.get(`${BASE_URL}/weather`, {
+      params: {
+        lat: latitude,
+        lon: longitude,
+        appid: API_KEY,
+        units: 'metric'
+      }
+    })
+
+    // Fetch 5-day forecast
+    const forecastResponse = await axios.get(`${BASE_URL}/forecast`, {
+      params: {
+        lat: latitude,
+        lon: longitude,
+        appid: API_KEY,
+        units: 'metric'
+      }
+    })
+
+    return {
+      current: currentResponse.data,
+      forecast: forecastResponse.data.list
+    }
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error('Invalid API key. Please check your configuration.')
+    } else {
+      throw new Error('Unable to fetch weather data for this location.')
+    }
+  }
+}
+
+/**
  * Get weather icon URL
  * @param {string} iconCode - Icon code from API
  * @returns {string} Icon URL

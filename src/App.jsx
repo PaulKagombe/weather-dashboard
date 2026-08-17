@@ -3,7 +3,9 @@ import SearchBar from './components/SearchBar'
 import CurrentWeather from './components/CurrentWeather'
 import Forecast from './components/Forecast'
 import WeatherDetails from './components/WeatherDetails'
+import GeolocationButton from './components/GeolocationButton'
 import { fetchWeatherData } from './services/weatherAPI'
+import { getLocationFromCoordinates } from './services/geolocationService'
 import './App.css'
 
 function App() {
@@ -11,7 +13,9 @@ function App() {
   const [forecast, setForecast] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [city, setCity] = useState('Nairobi') // Default city
+  const [city, setCity] = useState('London')
+  const [locationLoading, setLocationLoading] = useState(false)
+  const [userLocation, setUserLocation] = useState(null)
 
   useEffect(() => {
     handleSearch(city)
@@ -34,6 +38,46 @@ function App() {
     }
   }
 
+  const handleGeolocation = async () => {
+    setLocationLoading(true)
+    setError(null)
+
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser.')
+      setLocationLoading(false)
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords
+          setUserLocation({ latitude, longitude })
+
+          // Get city name from coordinates using reverse geocoding
+          const cityName = await getLocationFromCoordinates(latitude, longitude)
+          await handleSearch(cityName)
+        } catch (err) {
+          setError('Failed to get location. Please try again.')
+        } finally {
+          setLocationLoading(false)
+        }
+      },
+      (error) => {
+        let errorMessage = 'Unable to access your location.'
+        if (error.code === error.PERMISSION_DENIED) {
+          errorMessage = 'Location permission denied. Please enable it in your browser settings.'
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          errorMessage = 'Location information is unavailable.'
+        } else if (error.code === error.TIMEOUT) {
+          errorMessage = 'Location request timed out.'
+        }
+        setError(errorMessage)
+        setLocationLoading(false)
+      }
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-purple-600 p-4">
       <div className="max-w-6xl mx-auto">
@@ -46,8 +90,24 @@ function App() {
           <p className="text-blue-100 text-lg">Get real-time weather updates for any location</p>
         </div>
 
-        {/* Search Bar */}
-        <SearchBar onSearch={handleSearch} />
+        {/* Search Bar and Geolocation */}
+        <div className="flex gap-2 justify-center mb-8">
+          <div className="flex-1 max-w-md">
+            <SearchBar onSearch={handleSearch} />
+          </div>
+          <GeolocationButton
+            onGeolocation={handleGeolocation}
+            loading={locationLoading}
+          />
+        </div>
+
+        {/* Current Location Display */}
+        {userLocation && (
+          <div className="text-center text-white mb-4 text-sm">
+            <i className="fas fa-map-marker-alt mr-2 text-red-300"></i>
+            Location detected: {city}
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (
