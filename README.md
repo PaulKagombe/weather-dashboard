@@ -4,32 +4,32 @@ A modern, responsive weather dashboard that fetches real-time weather data from 
 
 ## Features
 
-✨ **Current Weather Display**
+ **Current Weather Display**
 - Real-time weather conditions for any location
 - Temperature, humidity, wind speed, pressure, and cloudiness
 - Sunrise and sunset times
 - Visibility and dew point calculations
 - Min/Max temperature
 
-📅 **5-Day Forecast**
+ **5-Day Forecast**
 - Daily weather predictions
 - Temperature trends
 - Weather descriptions and icons
 - Humidity and wind speed for each day
 
-🔍 **Smart Search**
+ **Smart Search**
 - Search weather for any city worldwide
 - Auto-suggestions for popular cities
 - Error handling for invalid cities
 
-🎨 **Beautiful UI**
+ **Beautiful UI**
 - Modern glass-morphism design
 - Responsive layout (mobile, tablet, desktop)
 - Smooth animations and transitions
 - Real-time weather icons from OpenWeatherMap
 - Font Awesome icons for enhanced visuals
 
-⚡ **Tech Stack**
+ **Tech Stack**
 - React 18
 - Vite
 - Tailwind CSS
@@ -239,4 +239,4 @@ For issues or questions, please open an issue on GitHub.
 
 ---
 
-**Made with ❤️ by PaulKagombe**
+**Made  by PaulKagombe**

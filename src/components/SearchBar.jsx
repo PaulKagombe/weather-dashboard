@@ -8,7 +8,9 @@ function SearchBar({ onSearch }) {
   // Popular cities for suggestions
   const popularCities = [
     'London', 'New York', 'Tokyo', 'Paris', 'Sydney',
-    'Dubai', 'Singapore', 'Toronto', 'Amsterdam', 'Bangkok'
+    'Dubai', 'Singapore', 'Toronto', 'Amsterdam', 'Bangkok','Nairobi', 
+    'LosAngeles', 'Chicago', 'Berlin', 'Barcelona', 'Rome', 'Istanbul', 
+    'Moscow', 'Seoul', 'Mumbai'
   ]
 
   const handleInputChange = (e) => {

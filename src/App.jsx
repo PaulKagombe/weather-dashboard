@@ -11,7 +11,7 @@ function App() {
   const [forecast, setForecast] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [city, setCity] = useState('London')
+  const [city, setCity] = useState('Nairobi') // Default city
 
   useEffect(() => {
     handleSearch(city)
