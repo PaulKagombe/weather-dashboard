@@ -9,19 +9,27 @@ export const getLocationFromCoordinates = async (latitude, longitude) => {
   try {
     const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY
     
-    if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE') {
-      throw new Error('API key not configured')
-    }
+    console.log('API Key loaded:', API_KEY ? 'Yes (hidden)' : 'No')
+    console.log('Latitude:', latitude, 'Longitude:', longitude)
+    
+    if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE' || API_KEY === '') {
+      throw new Error('API key not configured. Check environment variables.')\n    }
 
-    const response = await fetch(
-      `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
-    )
+    const url = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
+    console.log('Fetching from:', url.split('appid=')[0] + 'appid=***')
+    
+    const response = await fetch(url)
 
+    console.log('Reverse geocoding response status:', response.status)
+    
     if (!response.ok) {
-      throw new Error('Failed to fetch location data')
+      const errorData = await response.text()
+      console.error('API Error Response:', errorData)
+      throw new Error(`API returned ${response.status}: ${errorData}`)
     }
 
     const data = await response.json()
+    console.log('Reverse geocoding data:', data)
 
     if (data.length === 0) {
       throw new Error('No location found for these coordinates')
@@ -29,10 +37,12 @@ export const getLocationFromCoordinates = async (latitude, longitude) => {
 
     // Return city name, or country if city is not available
     const location = data[0]
-    return location.name || location.country || 'Unknown'
+    const cityName = location.name || location.country || 'Unknown'
+    console.log('Detected city:', cityName)
+    return cityName
   } catch (error) {
     console.error('Geolocation error:', error)
-    throw new Error('Unable to determine your location. Please search manually.')
+    throw new Error(`Location detection failed: ${error.message}`)
   }
 }
 
