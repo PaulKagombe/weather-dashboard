@@ -17,7 +17,7 @@ function App() {
   const [forecast, setForecast] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [city, setCity] = useState('London')
+  const [city, setCity] = useState('Nairobi')
   const [locationLoading, setLocationLoading] = useState(false)
   const [userLocation, setUserLocation] = useState(null)
   const [alerts, setAlerts] = useState([])
