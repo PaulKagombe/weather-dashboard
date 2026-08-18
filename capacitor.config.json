@@ -1,0 +1,5 @@
+{
+  "appId": "com.paul.weatherdashboard",
+  "appName": "weather-dashboard",
+  "webDir": "dist"
+}
